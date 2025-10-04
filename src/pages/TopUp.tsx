@@ -34,6 +34,14 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
     }
   }, [storedEmail, searchParams])
 
+  // Determine where user came from based on URL parameters
+  const cameFromDashboard = searchParams.get('amount') !== null
+  const backButtonText = cameFromDashboard ? 'Back to Dashboard' : 'Back to Login'
+  const backButtonAction = cameFromDashboard ? () => navigate('/dashboard') : () => {
+    logout()
+    onBackToLogin?.()
+  }
+
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEmail(e.target.value)
     if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }))
@@ -109,10 +117,7 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
         <div className="relative z-20 mx-auto w-full max-w-sm lg:rounded-2xl lg:bg-[#ededed] lg:p-8 lg:shadow-xl">
           {/* Back button */}
           <button 
-            onClick={() => {
-              logout()
-              onBackToLogin?.()
-            }}
+            onClick={backButtonAction}
             className="mb-4 flex items-center text-primary hover:text-primary/80 transition-colors"
           >
             <svg 
@@ -128,7 +133,7 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
                 d="M10 19l-7-7m0 0l7-7m-7 7h18" 
               />
             </svg>
-            Back to Login
+            {backButtonText}
           </button>
 
           <h2 className="text-2xl font-semibold text-primary">Top Up</h2>
