@@ -1,4 +1,5 @@
-import worldMapPng from '../assets/world-map.png'
+import worldMapPng from '../assets/worldmap.png'
+import worldMapCopyPng from '../assets/worldmap copy.png'
 
 interface AuthFormLayoutProps {
   title: string
@@ -18,11 +19,18 @@ export default function AuthFormLayout({
 }: AuthFormLayoutProps) {
   return (
     <div className="relative min-h-screen bg-[#67b58d]">
+      {/* Small screens only - use copy image */}
       <img 
-        src={worldMapPng} 
+        src={worldMapCopyPng} 
         alt="World map" 
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        className="pointer-events-none absolute top-0 left-0 w-full md:hidden object-cover"
         loading="eager" 
+      />
+      
+      {/* Medium screens and above - use original image as background */}
+      <div 
+        className="hidden md:block absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(' + worldMapPng + ')' }}
       />
 
       {/* Form area: mobile = bottom sheet; desktop = centered card */}

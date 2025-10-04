@@ -1,14 +1,12 @@
 interface ProfileAvatarProps {
-  profiles: readonly { readonly color: string; readonly type: string }[]
+  profiles: readonly { readonly color: string; readonly type: string; readonly image: string }[]
   activeProfile: number
-  profileImage: string
   userName: string
 }
 
 export default function ProfileAvatar({ 
   profiles, 
   activeProfile, 
-  profileImage, 
   userName 
 }: ProfileAvatarProps) {
   return (
@@ -52,13 +50,11 @@ export default function ProfileAvatar({
                     }
                   />
                 </svg>
-                <div className="h-40 w-40 rounded-full bg-[#cdd1d0] flex items-center justify-center">
-                  <img
-                    src={profileImage}
-                    alt="Profile"
-                    className="h-32 w-32 rounded-full object-cover"
-                  />
-                </div>
+                <img
+                  src={profile.image}
+                  alt="Profile"
+                  className="h-40 w-40 rounded-full object-cover"
+                />
               </div>
             </div>
           )

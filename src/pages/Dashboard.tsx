@@ -7,7 +7,6 @@ import TopUpAmountButton from '../components/TopUpAmountButton'
 import ProceedButton from '../components/ProceedButton'
 import NotificationBellIcon from '../components/icons/NotificationBellIcon'
 import ChevronDownIcon from '../components/icons/ChevronDownIcon'
-import profileImage from '../assets/Image1.png'
 import { useBalance } from '../hooks/useBalance'
 import { useProfileRotation } from '../hooks/useProfileRotation'
 import { useFormField } from '../hooks/useFormField'
@@ -58,7 +57,6 @@ export default function Dashboard() {
       <ProfileAvatar
         profiles={PROFILE_CONFIGS}
         activeProfile={activeProfile}
-        profileImage={profileImage}
         userName="Kofi Johnson"
       />
 
