@@ -7,12 +7,13 @@ type FormFieldProps = {
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   error?: string
+  className?: string
 }
 
-export default function FormField({ id, label, type = 'text', value, onChange, error }: FormFieldProps) {
+export default function FormField({ id, label, type = 'text', value, onChange, error, className }: FormFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-xs font-medium text-gray-500">{label}</label>
+      <label htmlFor={id} className={`block text-xs font-medium ${className || 'text-gray-500'}`}>{label}</label>
       <input
         id={id}
         type={type}
