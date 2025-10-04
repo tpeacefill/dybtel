@@ -3,13 +3,14 @@ import worldMap from '../assets/world-map.svg'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
 
-export default function Login() {
+export default function Login({ onSuccess }: { onSuccess?: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     // TODO: integrate with backend auth
+    onSuccess?.()
   }
 
   return (
