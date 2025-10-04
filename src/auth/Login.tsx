@@ -55,7 +55,7 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     } finally {
       setIsLoading(false)
     }
-  }, [emailField.value, passwordField.value, login, onSuccess, isLoading])
+  }, [emailField.value, passwordField.value, login, onSuccess, isLoading, handleValidationErrors])
 
 
   return (

@@ -112,7 +112,7 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
       amount: amountField.value,
       wardSerialId: wardSerialIdField.value
     })
-    navigate('/activity-history')
+    navigate('/dashboard')
   }
 
   return (
