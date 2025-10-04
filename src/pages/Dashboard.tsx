@@ -17,6 +17,12 @@ export default function Dashboard() {
     return total + parseFloat(transaction.amount)
   }, 0)
 
+  // Format balance with commas
+  const formattedBalance = currentBalance.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+
   // Handle proceed to payment
   const handleProceedToPayment = () => {
     const schema = z.string().min(1, 'Please select or enter an amount')
@@ -139,7 +145,7 @@ export default function Dashboard() {
         {/* Balance section */}
         <div className="px-6 text-center text-white">
           <p className="text-sm/6 opacity-70">Current Balance</p>
-          <p className="text-3xl font-extrabold tracking-wide text-[#215449]">GHC {currentBalance.toFixed(2)}</p>
+          <p className="text-3xl font-extrabold tracking-wide text-[#215449]">GHC {formattedBalance}</p>
         </div>
 
         {/* Top Up quick amounts */}
