@@ -1,0 +1,70 @@
+interface ProfileAvatarProps {
+  profiles: Array<{ color: string; type: string }>
+  activeProfile: number
+  profileImage: string
+  userName: string
+}
+
+export default function ProfileAvatar({ 
+  profiles, 
+  activeProfile, 
+  profileImage, 
+  userName 
+}: ProfileAvatarProps) {
+  return (
+    <div className="relative z-10 mx-auto max-w-md px-6">
+      {/* Avatar + arc (simple accent) */}
+      <div className="mt-4 flex items-center justify-center gap-4 relative h-64">
+        {profiles.map((profile, index) => {
+          const position = (index - activeProfile + 3) % 3
+          const isCenter = position === 1
+          const isLeft = position === 0
+          const isRight = position === 2
+          
+          return (
+            <div
+              key={index}
+              className={`absolute transition-all duration-700 ease-in-out ${
+                isCenter ? 'z-30 scale-100 opacity-100' : 'scale-75 opacity-60'
+              } ${isLeft ? 'z-10 -translate-x-44' : ''} ${
+                isRight ? 'z-10 translate-x-44' : ''
+              } ${isCenter ? 'translate-x-0' : ''}`}
+            >
+              <div className="relative">
+                <svg className="absolute -inset-6 w-[208px] h-[208px]" viewBox="0 0 208 208">
+                  <circle
+                    cx="104"
+                    cy="104"
+                    r="93"
+                    fill="none"
+                    stroke={profile.color}
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    strokeDasharray={
+                      profile.type === 'half' ? '292 584' :
+                      profile.type === 'arc' ? '135 1000' :
+                      undefined
+                    }
+                    transform={
+                      profile.type === 'half' ? 'rotate(90 104 104)' :
+                      profile.type === 'arc' ? 'rotate(145 104 104)' :
+                      undefined
+                    }
+                  />
+                </svg>
+                <div className="h-40 w-40 rounded-full bg-[#cdd1d0] flex items-center justify-center">
+                  <img
+                    src={profileImage}
+                    alt="Profile"
+                    className="h-32 w-32 rounded-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <p className="text-center text-xl font-semibold text-gray-600">{userName}</p>
+    </div>
+  )
+}
