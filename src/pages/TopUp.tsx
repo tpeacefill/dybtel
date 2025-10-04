@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { z } from 'zod'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import worldMap from '../assets/world-map.svg'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
@@ -21,13 +21,18 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
   const { email: storedEmail, logout } = useAuthStore()
   const { addTransaction } = useTransactionStore()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  // Prefill email from store when component mounts
+  // Prefill email from store and amount from URL when component mounts
   useEffect(() => {
     if (storedEmail) {
       setEmail(storedEmail)
     }
-  }, [storedEmail])
+    const amountFromUrl = searchParams.get('amount')
+    if (amountFromUrl) {
+      setAmount(amountFromUrl)
+    }
+  }, [storedEmail, searchParams])
 
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEmail(e.target.value)

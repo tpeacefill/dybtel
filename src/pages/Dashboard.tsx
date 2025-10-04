@@ -1,12 +1,36 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { z } from 'zod'
 import FormField from '../components/FormField'
 import profileImage from '../assets/Image1.png'
+import { useTransactionStore } from '../store/transactionStore'
 
 export default function Dashboard() {
   const [customAmount, setCustomAmount] = useState('')
   const [activeProfile, setActiveProfile] = useState(1) // 0: yellow, 1: red (default center), 2: green
+  const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { transactions } = useTransactionStore()
+
+  // Calculate current balance from transactions
+  const currentBalance = transactions.reduce((total, transaction) => {
+    return total + parseFloat(transaction.amount)
+  }, 0)
+
+  // Handle proceed to payment
+  const handleProceedToPayment = () => {
+    const schema = z.string().min(1, 'Please select or enter an amount')
+    const result = schema.safeParse(customAmount)
+    
+    if (!result.success) {
+      setError(result.error.issues[0].message)
+      return
+    }
+    
+    setError('')
+    // Navigate to TopUp with the selected amount
+    navigate(`/topup?amount=${customAmount}`)
+  }
 
   // Auto-rotate profiles every 3 seconds
   useEffect(() => {
@@ -115,7 +139,7 @@ export default function Dashboard() {
         {/* Balance section */}
         <div className="px-6 text-center text-white">
           <p className="text-sm/6 opacity-70">Current Balance</p>
-          <p className="text-3xl font-extrabold tracking-wide text-[#215449]">GHC 53.00</p>
+          <p className="text-3xl font-extrabold tracking-wide text-[#215449]">GHC {currentBalance.toFixed(2)}</p>
         </div>
 
         {/* Top Up quick amounts */}
@@ -157,7 +181,10 @@ export default function Dashboard() {
         {/* Proceed button */}
         <div className="mt-6 px-1">
           <div className="mx-auto max-w-56">
-                 <button className="flex w-full items-center justify-start gap-3 rounded-full bg-gradient-to-r from-[#c3d6cf] via-[#c3d6cf]/20 to-transparent p-0.5 text-white font-medium text-sm transition-all hover:opacity-90 cursor-pointer">
+                 <button 
+                   onClick={handleProceedToPayment}
+                   className="flex w-full items-center justify-start gap-3 rounded-full bg-gradient-to-r from-[#c3d6cf] via-[#c3d6cf]/20 to-transparent p-0.5 text-white font-medium text-sm transition-all hover:opacity-90 cursor-pointer"
+                 >
                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#609684]">
                  <svg
                    className="h-5 w-5 text-white"
@@ -173,6 +200,9 @@ export default function Dashboard() {
                  Proceed to Payment
                </span>
             </button>
+            {error && (
+              <p className="mt-2 text-center text-red-300 text-sm">{error}</p>
+            )}
           </div>
         </div>
 

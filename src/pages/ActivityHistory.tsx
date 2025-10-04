@@ -53,7 +53,7 @@ export default function ActivityHistory() {
         
         {/* Table container with overlap */}
         <div className="px-4 pt-8 pb-20 bg-gradient-to-b from-primary to-[#29664f] -mt-10 sm:-mt-8">
-          <div className="relative bg-gradient-to-b from-green-500 to-green-600 rounded-3xl overflow-hidden shadow-xl">
+          <div className="relative bg-gradient-to-b from-green-500 to-green-600 rounded-3xl overflow-hidden">
             {/* Table Headers */}
             <div className="grid grid-cols-4 gap-4 px-4 py-4" style={{ backgroundColor: '#2c5b53' }}>
               <div className="text-white font-semibold text-sm text-center">ID</div>
@@ -63,7 +63,7 @@ export default function ActivityHistory() {
             </div>
 
             {/* Table Rows */}
-            <div className="max-h-96 overflow-y-auto space-y-[0.5px]">
+            <div className="h-96 overflow-y-auto space-y-[0.5px] bg-gradient-to-b from-[#2c9951] to-[#2a7150]">
               {transactions.length === 0 ? (
                 <div className="px-4 py-8 text-center text-white">
                   <p>No transactions yet</p>
