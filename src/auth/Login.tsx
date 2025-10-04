@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import worldMap from '../assets/world-map.svg'
+import FormField from '../components/FormField'
+import PrimaryButton from '../components/PrimaryButton'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -19,34 +21,21 @@ export default function Login() {
         <div className="relative z-20 mx-auto w-full max-w-sm lg:rounded-2xl lg:bg-[#ededed] lg:p-8 lg:shadow-xl">
               <h2 className="text-2xl font-semibold text-primary">Login</h2>
               <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-                <div>
-                  <label htmlFor="email" className="block text-xs font-medium text-gray-500">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none ring-primary focus:ring-1 focus:border-primary"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="password" className="block text-xs font-medium text-gray-500">Password</label>
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none ring-primary focus:ring-1 focus:border-primary"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="mt-2 w-full rounded-2xl bg-primary px-6 py-3 text-lg font-regular text-white shadow-[0_8px_14px_rgba(0,0,0,0.18)] transition hover:brightness-95"
-                >
-                  Login
-                </button>
+                <FormField
+                  id="email"
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <FormField
+                  id="password"
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <PrimaryButton type="submit" className="mt-2">Login</PrimaryButton>
               </form>
               <p className="mt-6 mb-2 text-center text-sm text-gray-600">
                 Don’t have an account? <a href="#" className="font-semibold text-primary hover:underline">Signup</a>
