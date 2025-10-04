@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 export interface Transaction {
   id: string
@@ -16,28 +15,21 @@ interface TransactionState {
   addTransaction: (transaction: Omit<Transaction, 'id' | 'date' | 'wardName'>) => void
 }
 
-export const useTransactionStore = create<TransactionState>()(
-  persist(
-    (set) => ({
-      transactions: [],
-      addTransaction: (transactionData) => {
-        const newTransaction: Transaction = {
-          id: (Date.now() + Math.random()).toString(36).substr(2, 9), // Generate unique ID
-          ...transactionData,
-          date: new Date().toLocaleDateString('en-GB'), // Format: DD/MM/YY
-          wardName: getWardNameById(transactionData.wardSerialId) || 'Unknown Ward'
-        }
-        
-        set((state) => ({
-          transactions: [newTransaction, ...state.transactions] // Add to beginning of array
-        }))
-      }
-    }),
-    {
-      name: 'transaction-storage', // unique name for localStorage key
+export const useTransactionStore = create<TransactionState>((set) => ({
+  transactions: [],
+  addTransaction: (transactionData) => {
+    const newTransaction: Transaction = {
+      id: (Date.now() + Math.random()).toString(36).substr(2, 9), // Generate unique ID
+      ...transactionData,
+      date: new Date().toLocaleDateString('en-GB'), // Format: DD/MM/YY
+      wardName: getWardNameById(transactionData.wardSerialId) || 'Unknown Ward'
     }
-  )
-)
+    
+    set((state) => ({
+      transactions: [newTransaction, ...state.transactions] // Add to beginning of array
+    }))
+  }
+}))
 
 // Helper function to get ward name by ID (moved from data.ts for easier access)
 const getWardNameById = (id: string): string | undefined => {

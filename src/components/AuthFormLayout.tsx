@@ -1,7 +1,7 @@
 import worldMap from '../assets/world-map.svg'
 
 interface AuthFormLayoutProps {
-  title?: string
+  title: string
   children: React.ReactNode
   backButton?: {
     text: string
@@ -51,7 +51,7 @@ export default function AuthFormLayout({
             </button>
           )}
 
-          {title && <h2 className="text-2xl font-semibold text-primary">{title}</h2>}
+          <h2 className="text-2xl font-semibold text-primary">{title}</h2>
           {children}
           
           {/* Footer content */}

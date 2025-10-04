@@ -19,56 +19,18 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
   const { login } = useAuthStore()
   const { handleValidationErrors } = useValidationErrorHandler()
 
-  // Check for saved credentials
-  const getSavedCredentials = () => {
-    const savedEmail = localStorage.getItem('savedEmail')
-    const savedPassword = localStorage.getItem('savedPassword')
-    return { email: savedEmail, password: savedPassword }
-  }
-
-  // Save credentials to localStorage
-  const saveCredentials = (email: string, password: string) => {
-    localStorage.setItem('savedEmail', email)
-    localStorage.setItem('savedPassword', password)
-  }
-
-  // Validate credentials against saved data
-  const validateCredentials = useCallback((email: string, password: string) => {
-    const { email: savedEmail, password: savedPassword } = getSavedCredentials()
-    
-    if (!savedEmail) {
-      return { isValid: false, error: 'Email not found. Please sign up first.' }
-    }
-    
-    if (savedEmail !== email) {
-      return { isValid: false, error: 'Email not found. Please check your email or sign up.' }
-    }
-    
-    if (savedPassword !== password) {
-      return { isValid: false, error: 'Incorrect password. Please try again.' }
-    }
-    
-    return { isValid: true, error: null }
-  }, [])
-
-  // Get saved credentials for initial values
-  const { email: savedEmail, password: savedPassword } = getSavedCredentials()
-
-  // Use custom hook for form fields with initial values
+  // Use custom hook for form fields
   const emailField = useFormField({
     errors,
     setErrors,
-    fieldName: 'email',
-    initialValue: savedEmail || ''
+    fieldName: 'email'
   })
 
   const passwordField = useFormField({
     errors,
     setErrors,
-    fieldName: 'password',
-    initialValue: savedPassword || ''
+    fieldName: 'password'
   })
-
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -86,38 +48,14 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
         return
       }
 
-      // Validate credentials against saved data
-      const credentialValidation = validateCredentials(emailField.value, passwordField.value)
-      
-      if (!credentialValidation.isValid) {
-        setErrors({ email: credentialValidation.error || undefined })
-        return
-      }
-
       setErrors({})
-      
-      // Check if user is logging in with saved credentials
-      const { email: savedEmail, password: savedPassword } = getSavedCredentials()
-      const isReturningUser = savedEmail === emailField.value && savedPassword === passwordField.value
-      
-      // Save credentials for future logins
-      saveCredentials(emailField.value, passwordField.value)
-      
-      // Store email in global state
+      // Store email in global state and navigate to TopUp
       login(emailField.value)
-      
-      // Navigate based on whether user is returning or new
-      if (isReturningUser) {
-        // Navigate to Dashboard for returning users
-        window.location.href = '/dashboard'
-      } else {
-        // Navigate to TopUp for new users
-        onSuccess?.()
-      }
+      onSuccess?.()
     } finally {
       setIsLoading(false)
     }
-  }, [emailField.value, passwordField.value, login, onSuccess, isLoading, handleValidationErrors, validateCredentials])
+  }, [emailField.value, passwordField.value, login, onSuccess, isLoading, handleValidationErrors])
 
 
   return (
