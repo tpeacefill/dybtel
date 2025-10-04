@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { z } from 'zod'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
@@ -19,6 +19,19 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
   const { login } = useAuthStore()
   const { handleValidationErrors } = useValidationErrorHandler()
 
+  // Check for saved credentials
+  const getSavedCredentials = () => {
+    const savedEmail = localStorage.getItem('savedEmail')
+    const savedPassword = localStorage.getItem('savedPassword')
+    return { email: savedEmail, password: savedPassword }
+  }
+
+  // Save credentials to localStorage
+  const saveCredentials = (email: string, password: string) => {
+    localStorage.setItem('savedEmail', email)
+    localStorage.setItem('savedPassword', password)
+  }
+
   // Use custom hook for form fields
   const emailField = useFormField({
     errors,
@@ -31,6 +44,13 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     setErrors,
     fieldName: 'password'
   })
+
+  // Prefill form with saved credentials on component mount
+  useEffect(() => {
+    const { email, password } = getSavedCredentials()
+    if (email) emailField.setValue(email)
+    if (password) passwordField.setValue(password)
+  }, [emailField, passwordField])
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,9 +69,25 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
       }
 
       setErrors({})
-      // Store email in global state and navigate to TopUp
+      
+      // Check if user is logging in with saved credentials
+      const { email: savedEmail, password: savedPassword } = getSavedCredentials()
+      const isReturningUser = savedEmail === emailField.value && savedPassword === passwordField.value
+      
+      // Save credentials for future logins
+      saveCredentials(emailField.value, passwordField.value)
+      
+      // Store email in global state
       login(emailField.value)
-      onSuccess?.()
+      
+      // Navigate based on whether user is returning or new
+      if (isReturningUser) {
+        // Navigate to Dashboard for returning users
+        window.location.href = '/dashboard'
+      } else {
+        // Navigate to TopUp for new users
+        onSuccess?.()
+      }
     } finally {
       setIsLoading(false)
     }
