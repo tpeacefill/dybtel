@@ -43,7 +43,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="relative min-h-screen bg-white">
+    <div className="relative min-h-screen bg-white overflow-x-hidden">
 
       {/* Header row (icons) - Full width */}
       <div className="w-full bg-white px-6 pt-8">
