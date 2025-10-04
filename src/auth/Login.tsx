@@ -71,14 +71,6 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     if (password) passwordField.setValue(password)
   }, [emailField, passwordField])
 
-  // Clear saved credentials
-  const clearSavedCredentials = () => {
-    localStorage.removeItem('savedEmail')
-    localStorage.removeItem('savedPassword')
-    emailField.setValue('')
-    passwordField.setValue('')
-    setErrors({})
-  }
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -132,28 +124,13 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
 
   return (
     <AuthFormLayout 
+      title="Login"
       footer={
         <p className="mb-2 text-center text-sm text-gray-600">
           Don't have an account? <a href="#" className="font-semibold text-primary hover:underline cursor-pointer">Signup</a>
         </p>
       }
     >
-      <div className="flex items-center justify-between mt-8">
-        <h2 className="text-2xl font-semibold text-primary">Login</h2>
-        {(emailField.value || passwordField.value) && (
-          <button
-            type="button"
-            onClick={clearSavedCredentials}
-            className="text-sm text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1"
-            title="Clear saved credentials"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            Clear
-          </button>
-        )}
-      </div>
       <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
         <FormField
           id="email"
