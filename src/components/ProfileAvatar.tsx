@@ -1,5 +1,5 @@
 interface ProfileAvatarProps {
-  profiles: Array<{ color: string; type: string }>
+  profiles: readonly { readonly color: string; readonly type: string }[]
   activeProfile: number
   profileImage: string
   userName: string

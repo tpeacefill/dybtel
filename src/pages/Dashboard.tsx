@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import FormField from '../components/FormField'
@@ -7,18 +7,29 @@ import TopUpAmountButton from '../components/TopUpAmountButton'
 import ProceedButton from '../components/ProceedButton'
 import profileImage from '../assets/Image1.png'
 import { useBalance } from '../hooks/useBalance'
+import { useProfileRotation } from '../hooks/useProfileRotation'
+import { useFormField } from '../hooks/useFormField'
+import { PROFILE_CONFIGS, QUICK_AMOUNTS } from '../constants/dashboard'
 
 export default function Dashboard() {
-  const [customAmount, setCustomAmount] = useState('')
-  const [activeProfile, setActiveProfile] = useState(1) // 0: yellow, 1: red (default center), 2: green
-  const [error, setError] = useState('')
   const navigate = useNavigate()
   const { formattedBalance } = useBalance()
+  const activeProfile = useProfileRotation()
+  
+  // Error state for validation
+  const [error, setError] = useState('')
+  
+  // Use custom hook for form field
+  const customAmountField = useFormField({
+    errors: { customAmount: error },
+    setErrors: (newErrors) => setError((newErrors as { customAmount?: string }).customAmount || ''),
+    fieldName: 'customAmount'
+  })
 
   // Handle proceed to payment
   const handleProceedToPayment = () => {
     const schema = z.string().min(1, 'Please select or enter an amount')
-    const result = schema.safeParse(customAmount)
+    const result = schema.safeParse(customAmountField.value)
     
     if (!result.success) {
       setError(result.error.issues[0].message)
@@ -27,22 +38,8 @@ export default function Dashboard() {
     
     setError('')
     // Navigate to TopUp with the selected amount
-    navigate(`/topup?amount=${customAmount}`)
+    navigate(`/topup?amount=${customAmountField.value}`)
   }
-
-  // Auto-rotate profiles every 3 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveProfile((prev) => (prev + 1) % 3)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const profiles = [
-    { color: '#eab308', type: 'half' }, // Yellow
-    { color: '#ef4444', type: 'arc' },  // Red
-    { color: '#22c55e', type: 'full' }  // Green
-  ]
 
   return (
     <div className="relative min-h-screen bg-white">
@@ -61,7 +58,7 @@ export default function Dashboard() {
 
       {/* Profile section */}
       <ProfileAvatar
-        profiles={profiles}
+        profiles={PROFILE_CONFIGS}
         activeProfile={activeProfile}
         profileImage={profileImage}
         userName="Kofi Johnson"
@@ -95,11 +92,11 @@ export default function Dashboard() {
           <div className="mt-4 relative rounded-t-3xl p-3">
             <div className="absolute inset-0 rounded-t-3xl border-t border-l border-r border-white/40 pointer-events-none" style={{ WebkitMaskImage: 'linear-gradient(to bottom, white 0%, white 5%, transparent 70%)', maskImage: 'linear-gradient(to bottom, white 0%, white 5%, transparent 70%)' }}></div>
             <div className="grid grid-cols-4 gap-3">
-              {['50', '100', '150', '200'].map((amt) => (
+              {QUICK_AMOUNTS.map((amt) => (
                 <TopUpAmountButton
                   key={amt}
                   amount={amt}
-                  onClick={() => setCustomAmount(amt)}
+                  onClick={() => customAmountField.setValue(amt)}
                 />
               ))}
             </div>
@@ -111,8 +108,9 @@ export default function Dashboard() {
                   id="custom-amount"
                   label="Custom Amount"
                   type="number"
-                  value={customAmount}
-                  onChange={(e) => setCustomAmount(e.target.value)}
+                  value={customAmountField.value}
+                  onChange={customAmountField.handleChange}
+                  error={customAmountField.error}
                   className="text-white"
                 />
               </div>
@@ -124,7 +122,6 @@ export default function Dashboard() {
         <div className="mt-6 px-1">
           <ProceedButton 
             onClick={handleProceedToPayment}
-            error={error}
           />
         </div>
 
