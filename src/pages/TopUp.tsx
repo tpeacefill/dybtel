@@ -4,14 +4,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import worldMap from '../assets/world-map.svg'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
+import WardSerialIdField from '../components/WardSerialIdField'
 import { useAuthStore } from '../store/authStore'
 import { useTransactionStore } from '../store/transactionStore'
+import { useFormField } from '../hooks/useFormField'
 
 export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void }) {
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [amount, setAmount] = useState('')
-  const [wardSerialId, setWardSerialId] = useState('')
   const [errors, setErrors] = useState<{ 
     email?: string; 
     phone?: string; 
@@ -23,16 +21,39 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
-  // Prefill email from store and amount from URL when component mounts
+  // Use custom hook for form fields
+  const emailField = useFormField({
+    initialValue: storedEmail || '',
+    errors,
+    setErrors,
+    fieldName: 'email'
+  })
+
+  const phoneField = useFormField({
+    errors,
+    setErrors,
+    fieldName: 'phone'
+  })
+
+  const amountField = useFormField({
+    errors,
+    setErrors,
+    fieldName: 'amount'
+  })
+
+  const wardSerialIdField = useFormField({
+    errors,
+    setErrors,
+    fieldName: 'wardSerialId'
+  })
+
+  // Prefill amount from URL when component mounts
   useEffect(() => {
-    if (storedEmail) {
-      setEmail(storedEmail)
-    }
     const amountFromUrl = searchParams.get('amount')
     if (amountFromUrl) {
-      setAmount(amountFromUrl)
+      amountField.setValue(amountFromUrl)
     }
-  }, [storedEmail, searchParams])
+  }, [searchParams, amountField])
 
   // Determine where user came from based on URL parameters
   const cameFromDashboard = searchParams.get('amount') !== null
@@ -42,26 +63,17 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
     onBackToLogin?.()
   }
 
-  function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setEmail(e.target.value)
-    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }))
-  }
-
-  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+  // Custom handlers for special field formatting
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 10) // Only numbers, max 10 digits
-    setPhone(value)
-    if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }))
+    phoneField.setValue(value)
+    phoneField.clearError()
   }
 
-  function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setAmount(e.target.value)
-    if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }))
-  }
-
-  function handleWardSerialIdChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleWardSerialIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 3) // Only numbers, max 3 digits
-    setWardSerialId(value)
-    if (errors.wardSerialId) setErrors((prev) => ({ ...prev, wardSerialId: undefined }))
+    wardSerialIdField.setValue(value)
+    wardSerialIdField.clearError()
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -79,7 +91,12 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
       }, 'Ward Serial ID must be between 001 and 020'),
     })
 
-    const result = schema.safeParse({ email, phone, amount, wardSerialId })
+    const result = schema.safeParse({ 
+      email: emailField.value, 
+      phone: phoneField.value, 
+      amount: amountField.value, 
+      wardSerialId: wardSerialIdField.value 
+    })
     if (!result.success) {
       const fieldErrors: { 
         email?: string; 
@@ -100,10 +117,10 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
     setErrors({})
     // Save transaction data and navigate to ActivityHistory
     addTransaction({
-      email,
-      phone,
-      amount,
-      wardSerialId
+      email: emailField.value,
+      phone: phoneField.value,
+      amount: amountField.value,
+      wardSerialId: wardSerialIdField.value
     })
     navigate('/activity-history')
   }
@@ -142,72 +159,41 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
               id="email"
               label="Email"
               type="email"
-              value={email}
-              onChange={handleEmailChange}
-              error={errors.email}
+              value={emailField.value}
+              onChange={emailField.handleChange}
+              error={emailField.error}
               disabled={true}
             />
             <FormField
               id="phone"
               label="Phone"
               type="tel"
-              value={phone}
+              value={phoneField.value}
               onChange={handlePhoneChange}
-              error={errors.phone}
+              error={phoneField.error}
               placeholder="0277324365"
             />
             <FormField
               id="amount"
               label="Amount"
               type="number"
-              value={amount}
-              onChange={handleAmountChange}
-              error={errors.amount}
+              value={amountField.value}
+              onChange={amountField.handleChange}
+              error={amountField.error}
             />
-            <div>
-              <label htmlFor="wardSerialId" className="block text-xs font-medium text-gray-500">Ward Serial ID</label>
-              <div className={`mt-2 flex rounded-xl border ${errors.wardSerialId ? 'border-red-500' : 'border-gray-300'} bg-white overflow-hidden`}>
-                <input
-                  id="wardSerialId"
-                  type="text"
-                  value={wardSerialId}
-                  onChange={handleWardSerialIdChange}
-                  placeholder="001"
-                  className="flex-1 px-4 py-3 outline-none ring-primary focus:ring-1 focus:border-primary"
-                  aria-invalid={Boolean(errors.wardSerialId)}
-                  aria-describedby={errors.wardSerialId ? 'wardSerialId-error' : undefined}
-                />
-                <button
-                  type="button"
-                  className="px-4 py-3 bg-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center"
-                  onClick={() => {
-                    const currentValue = wardSerialId ? parseInt(wardSerialId, 10) : 0
-                    const newValue = currentValue + 1
-                    if (newValue <= 20) {
-                      setWardSerialId(newValue.toString().padStart(3, '0'))
-                      if (errors.wardSerialId) setErrors((prev) => ({ ...prev, wardSerialId: undefined }))
-                    }
-                  }}
-                >
-                  <svg 
-                    className="w-5 h-5 text-gray-600" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6" 
-                    />
-                  </svg>
-                </button>
-              </div>
-              {errors.wardSerialId ? (
-                <p id="wardSerialId-error" className="mt-1 text-xs text-red-600">{errors.wardSerialId}</p>
-              ) : null}
-            </div>
+            <WardSerialIdField
+              value={wardSerialIdField.value}
+              onChange={handleWardSerialIdChange}
+              onIncrement={() => {
+                const currentValue = wardSerialIdField.value ? parseInt(wardSerialIdField.value, 10) : 0
+                const newValue = currentValue + 1
+                if (newValue <= 20) {
+                  wardSerialIdField.setValue(newValue.toString().padStart(3, '0'))
+                  wardSerialIdField.clearError()
+                }
+              }}
+              error={wardSerialIdField.error}
+            />
             <PrimaryButton type="submit" className="mt-2">Proceed to Payment</PrimaryButton>
           </form>
         </div>
