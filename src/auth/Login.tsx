@@ -1,9 +1,10 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import { z } from 'zod'
 import worldMap from '../assets/world-map.svg'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
 import { useAuthStore } from '../store/authStore'
+import { useFormField } from '../hooks/useFormField'
 
 // Validation schema
 const loginSchema = z.object({
@@ -12,34 +13,22 @@ const loginSchema = z.object({
 })
 
 export default function Login({ onSuccess }: { onSuccess?: () => void }) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
   const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuthStore()
 
-  // Clearing error functions
-  const clearEmailError = useCallback(() => {
-    if (errors.email) {
-      setErrors(prev => ({ ...prev, email: undefined }))
-    }
-  }, [errors.email])
+  // Use custom hook for form fields
+  const emailField = useFormField({
+    errors,
+    setErrors,
+    fieldName: 'email'
+  })
 
-  const clearPasswordError = useCallback(() => {
-    if (errors.password) {
-      setErrors(prev => ({ ...prev, password: undefined }))
-    }
-  }, [errors.password])
-
-  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-    clearEmailError()
-  }, [clearEmailError])
-
-  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
-    clearPasswordError()
-  }, [clearPasswordError])
+  const passwordField = useFormField({
+    errors,
+    setErrors,
+    fieldName: 'password'
+  })
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,7 +39,7 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     setIsLoading(true)
     
     try {
-      const result = loginSchema.safeParse({ email, password })
+      const result = loginSchema.safeParse({ email: emailField.value, password: passwordField.value })
       
       if (!result.success) {
         const fieldErrors: { email?: string; password?: string } = {}
@@ -64,17 +53,13 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
 
       setErrors({})
       // Store email in global state and navigate to TopUp
-      login(email)
+      login(emailField.value)
       onSuccess?.()
     } finally {
       setIsLoading(false)
     }
-  }, [email, password, login, onSuccess, isLoading])
+  }, [emailField.value, passwordField.value, login, onSuccess, isLoading])
 
-  // Form validation state
-  const isFormValid = useMemo(() => {
-    return email.length > 0 && password.length >= 6
-  }, [email, password])
 
   return (
     <div className="relative min-h-screen bg-[#67b58d]">
@@ -94,9 +79,9 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
               id="email"
               label="Email"
               type="email"
-              value={email}
-              onChange={handleEmailChange}
-              error={errors.email}
+              value={emailField.value}
+              onChange={emailField.handleChange}
+              error={emailField.error}
               disabled={isLoading}
               autoComplete="email"
               autoFocus
@@ -105,16 +90,15 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
               id="password"
               label="Password"
               type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              error={errors.password}
+              value={passwordField.value}
+              onChange={passwordField.handleChange}
+              error={passwordField.error}
               disabled={isLoading}
               autoComplete="current-password"
             />
             <PrimaryButton 
               type="submit" 
               className="mt-2"
-              disabled={!isFormValid || isLoading}
             >
               {isLoading ? 'Logging in...' : 'Login'}
             </PrimaryButton>
