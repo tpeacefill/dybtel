@@ -6,9 +6,10 @@ type FormFieldProps = {
   type?: InputHTMLAttributes<HTMLInputElement>['type']
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  error?: string
 }
 
-export default function FormField({ id, label, type = 'text', value, onChange }: FormFieldProps) {
+export default function FormField({ id, label, type = 'text', value, onChange, error }: FormFieldProps) {
   return (
     <div>
       <label htmlFor={id} className="block text-xs font-medium text-gray-500">{label}</label>
@@ -17,9 +18,13 @@ export default function FormField({ id, label, type = 'text', value, onChange }:
         type={type}
         value={value}
         onChange={onChange}
-        className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none ring-primary focus:ring-1 focus:border-primary"
-        required
+        className={`mt-2 w-full rounded-xl border bg-white px-4 py-3 outline-none ring-primary focus:ring-1 focus:border-primary ${error ? 'border-red-500' : 'border-gray-300'}`}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
       />
+      {error ? (
+        <p id={`${id}-error`} className="mt-1 text-xs text-red-600">{error}</p>
+      ) : null}
     </div>
   )
 }
