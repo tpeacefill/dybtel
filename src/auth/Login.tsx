@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { z } from 'zod'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
@@ -51,25 +51,23 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     return { isValid: true, error: null }
   }, [])
 
-  // Use custom hook for form fields
+  // Get saved credentials for initial values
+  const { email: savedEmail, password: savedPassword } = getSavedCredentials()
+
+  // Use custom hook for form fields with initial values
   const emailField = useFormField({
     errors,
     setErrors,
-    fieldName: 'email'
+    fieldName: 'email',
+    initialValue: savedEmail || ''
   })
 
   const passwordField = useFormField({
     errors,
     setErrors,
-    fieldName: 'password'
+    fieldName: 'password',
+    initialValue: savedPassword || ''
   })
-
-  // Prefill form with saved credentials on component mount
-  useEffect(() => {
-    const { email, password } = getSavedCredentials()
-    if (email) emailField.setValue(email)
-    if (password) passwordField.setValue(password)
-  }, [emailField, passwordField])
 
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
