@@ -1,73 +1,162 @@
-# React + TypeScript + Vite
+# Dybtel - Mobile Wallet Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React-based mobile wallet application built with TypeScript, featuring user authentication, balance management, and transaction history tracking.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Core Functionality
+- **User Authentication**: Secure login with email and password validation
+- **Balance Management**: Real-time balance calculation and display
+- **Top-Up System**: Quick amount selection and custom amount input
+- **Transaction History**: Complete activity tracking with detailed transaction records
+- **Profile Management**: Dynamic profile avatars with auto-rotation
 
-## React Compiler
+### User Experience
+- **Responsive Design**: Optimized for mobile and desktop devices
+- **Modern UI**: Clean, intuitive interface with smooth animations
+- **Form Validation**: Real-time validation with helpful error messages
+- **Navigation**: Seamless routing between different sections
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+### Frontend
+- **React 19** - Modern React with latest features
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool and development server
+- **Tailwind CSS 4** - Utility-first CSS framework
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### State Management
+- **Zustand** - Lightweight state management
+- **React Router DOM** - Client-side routing
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Validation & Forms
+- **Zod** - Schema validation library
+- **Custom Hooks** - Reusable form field management
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Development Tools
+- **ESLint** - Code linting and formatting
+- **TypeScript ESLint** - TypeScript-specific linting rules
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📱 Pages & Components
+
+### Main Pages
+- **Login** (`/login`) - User authentication
+- **Dashboard** (`/dashboard`) - Balance overview and top-up interface
+- **Top-Up** (`/topup`) - Transaction processing
+- **Activity History** (`/activity-history`) - Transaction records
+
+### Key Components
+- **AuthFormLayout** - Responsive authentication form wrapper
+- **ProfileAvatar** - Dynamic profile display with rotation
+- **FormField** - Reusable form input component
+- **TransactionTable** - Transaction history display
+- **NavigationBar** - Consistent navigation across pages
+
+### Custom Hooks
+- **useFormField** - Form field state management
+- **useBalance** - Balance calculation and formatting
+- **useProfileRotation** - Profile avatar rotation logic
+- **useValidationErrorHandler** - Centralized validation error handling
+
+## 🎨 Design Features
+
+### Responsive Images
+- **Small screens**: Optimized world map copy for mobile
+- **Medium+ screens**: Full-resolution world map background
+- **Profile avatars**: Multiple distinct profile images
+
+### Visual Elements
+- **Gradient backgrounds**: Smooth color transitions
+- **Curved sections**: Modern geometric design elements
+- **Animated profiles**: Auto-rotating profile avatars
+- **Interactive buttons**: Hover states and transitions
+
+## 🚦 Getting Started
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn package manager
+
+### Installation
+```bash
+# Clone the repository
+git clone <repository-url>
+cd dybtel
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Available Scripts
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
 ```
+
+## 📁 Project Structure
+
+```
+src/
+├── auth/           # Authentication components
+├── components/     # Reusable UI components
+│   ├── icons/      # SVG icon components
+│   └── ...
+├── hooks/          # Custom React hooks
+├── pages/          # Main application pages
+├── store/          # Zustand state management
+├── constants/       # Application constants
+└── assets/         # Static assets (images, etc.)
+```
+
+## 🔧 Configuration
+
+### Environment Setup
+The application uses environment-based configuration for:
+- API endpoints
+- Feature flags
+- Development/production settings
+
+### State Management
+- **Auth Store**: User authentication state
+- **Transaction Store**: Transaction history and balance management
+
+## 🎯 Key Features Explained
+
+### Profile System
+- Three distinct profile configurations with different colors and arc types
+- Auto-rotation every 3 seconds for dynamic user experience
+- Individual profile images for visual diversity
+
+### Transaction Processing
+- Ward Serial ID validation (001-020 range)
+- Phone number formatting and validation
+- Amount validation with custom input support
+- Real-time balance updates
+
+### Responsive Design
+- Mobile-first approach with progressive enhancement
+- Adaptive image loading based on screen size
+- Touch-friendly interface elements
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Built with modern React patterns and best practices
+- Optimized for performance and user experience
+- Designed with accessibility and mobile-first principles
