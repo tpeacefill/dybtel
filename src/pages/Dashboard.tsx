@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import FormField from '../components/FormField'
 import profileImage from '../assets/Image1.png'
 
 export default function Dashboard() {
   const [customAmount, setCustomAmount] = useState('')
   const [activeProfile, setActiveProfile] = useState(1) // 0: yellow, 1: red (default center), 2: green
+  const navigate = useNavigate()
 
   // Auto-rotate profiles every 3 seconds
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function Dashboard() {
             })}
           </div>
 
-          <p className="mt-6 text-center text-xl font-semibold text-gray-600">Kofi Johnson</p>
+          <p className="text-center text-xl font-semibold text-gray-600">Kofi Johnson</p>
       </div>
 
       {/* Green gradient section with convex curve */}
@@ -126,7 +128,7 @@ export default function Dashboard() {
                 <button
                   key={amt}
                   onClick={() => setCustomAmount(amt)}
-                  className="aspect-square w-full rounded-2xl bg-[#7ec492] p-2 sm:p-3 text-center shadow-md ring-1 ring-white/25 backdrop-blur-[1px] border border-white/40"
+                  className="aspect-square w-full rounded-2xl bg-[#7ec492] p-2 sm:p-3 text-center shadow-md ring-1 ring-white/25 backdrop-blur-[1px] border border-white/40 cursor-pointer"
                 >
                   <div className="mx-auto flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-[#205348] text-white text-xs sm:text-base">
                     ¢
@@ -155,7 +157,7 @@ export default function Dashboard() {
         {/* Proceed button */}
         <div className="mt-6 px-1">
           <div className="mx-auto max-w-56">
-                 <button className="flex w-full items-center justify-start gap-3 rounded-full bg-gradient-to-r from-[#c3d6cf] via-[#c3d6cf]/20 to-transparent p-0.5 text-white font-medium text-sm transition-all hover:opacity-90">
+                 <button className="flex w-full items-center justify-start gap-3 rounded-full bg-gradient-to-r from-[#c3d6cf] via-[#c3d6cf]/20 to-transparent p-0.5 text-white font-medium text-sm transition-all hover:opacity-90 cursor-pointer">
                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#609684]">
                  <svg
                    className="h-5 w-5 text-white"
@@ -176,7 +178,10 @@ export default function Dashboard() {
 
         {/* Activity history link */}
         <div className="mt-6 pb-8 text-center text-white/90">
-          <button className="inline-flex items-center gap-2 underline-offset-4 hover:underline">
+          <button 
+            onClick={() => navigate('/activity-history')}
+            className="inline-flex items-center gap-2 underline-offset-4 hover:underline cursor-pointer"
+          >
             View activity history 
             <div className="flex h-3 w-3 items-center justify-center rounded-full bg-[#d9d9d9]">
               <svg className="h-3 w-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">

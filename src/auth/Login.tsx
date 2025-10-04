@@ -70,7 +70,7 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
                 <PrimaryButton type="submit" className="mt-2">Login</PrimaryButton>
               </form>
               <p className="mt-6 mb-2 text-center text-sm text-gray-600">
-                Don’t have an account? <a href="#" className="font-semibold text-primary hover:underline">Signup</a>
+                Don't have an account? <a href="#" className="font-semibold text-primary hover:underline cursor-pointer">Signup</a>
               </p>
         </div>
         {/* Safe area spacer for iOS/Android bottom bars */}
