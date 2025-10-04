@@ -10,9 +10,11 @@ type FormFieldProps = {
   className?: string
   disabled?: boolean
   placeholder?: string
+  autoComplete?: string
+  autoFocus?: boolean
 }
 
-export default function FormField({ id, label, type = 'text', value, onChange, error, className, disabled, placeholder }: FormFieldProps) {
+export default function FormField({ id, label, type = 'text', value, onChange, error, className, disabled, placeholder, autoComplete, autoFocus }: FormFieldProps) {
   return (
     <div>
       <label htmlFor={id} className={`block text-xs font-medium ${className || 'text-gray-500'}`}>{label}</label>
@@ -23,6 +25,8 @@ export default function FormField({ id, label, type = 'text', value, onChange, e
         onChange={onChange}
         disabled={disabled}
         placeholder={placeholder}
+        autoComplete={autoComplete}
+        autoFocus={autoFocus}
         className={`mt-2 w-full rounded-xl border bg-white px-4 py-3 outline-none ring-primary focus:ring-1 focus:border-primary ${error ? 'border-red-500' : 'border-gray-300'} ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
