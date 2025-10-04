@@ -1,4 +1,4 @@
-import worldMap from '../assets/world-map.svg'
+import worldMapPng from '../assets/world-map.png'
 
 interface AuthFormLayoutProps {
   title: string
@@ -19,7 +19,7 @@ export default function AuthFormLayout({
   return (
     <div className="relative min-h-screen bg-[#67b58d]">
       <img 
-        src={worldMap} 
+        src={worldMapPng} 
         alt="World map" 
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         loading="eager" 
