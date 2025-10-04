@@ -1,22 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTransactionStore } from '../store/transactionStore'
 
 export default function ActivityHistory() {
   const [selectedRow, setSelectedRow] = useState(0)
   const navigate = useNavigate()
-
-  const activities = [
-    { id: '001', ward: 'Acus Yum', date: '12/03/29', amount: '500' },
-    { id: '002', ward: 'Bcus Yum', date: '12/03/29', amount: '200' },
-    { id: '003', ward: 'Kus Yum', date: '12/03/29', amount: '100' },
-    { id: '004', ward: 'Jus Yum', date: '12/03/29', amount: '200' },
-    { id: '005', ward: 'Acus Yum', date: '12/03/29', amount: '200' },
-    { id: '006', ward: 'Acus Yum', date: '12/03/29', amount: '200' },
-    { id: '007', ward: 'Acus Yum', date: '12/03/29', amount: '200' },
-    { id: '008', ward: 'Acus Yum', date: '12/03/29', amount: '200' },
-    { id: '009', ward: 'Acus Yum', date: '12/03/29', amount: '200' },
-    { id: '010', ward: 'Acus Yum', date: '12/03/29', amount: '200' },
-  ]
+  const { transactions } = useTransactionStore()
 
   return (
     <div className="relative min-h-screen bg-white">
@@ -75,9 +64,15 @@ export default function ActivityHistory() {
 
             {/* Table Rows */}
             <div className="max-h-96 overflow-y-auto space-y-[0.5px]">
-              {activities.map((activity, index) => (
+              {transactions.length === 0 ? (
+                <div className="px-4 py-8 text-center text-white">
+                  <p>No transactions yet</p>
+                  <p className="text-sm text-gray-300 mt-2">Complete a top-up to see your activity history</p>
+                </div>
+              ) : (
+                transactions.map((transaction, index) => (
                 <div
-                  key={activity.id}
+                  key={transaction.id}
                   onClick={() => setSelectedRow(index)}
                   className={`grid grid-cols-4 gap-4 px-4 py-4 cursor-pointer transition-colors ${
                     index === 0
@@ -89,15 +84,16 @@ export default function ActivityHistory() {
                   style={{ 
                     backgroundColor: '#64a78b',
                     borderBottom: (index === 0 || selectedRow === index) ? '2px solid #60a5fa' : 
-                                 (index < activities.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none')
+                                 (index < transactions.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none')
                   }}
                 >
-                  <div className="text-white text-sm text-center">{activity.id}</div>
-                  <div className="text-white text-sm text-center">{activity.ward}</div>
-                  <div className="text-white text-sm text-center">{activity.date}</div>
-                  <div className="text-white text-sm text-center">{activity.amount}</div>
+                  <div className="text-white text-sm text-center">{transaction.wardSerialId}</div>
+                  <div className="text-white text-sm text-center">{transaction.wardName}</div>
+                  <div className="text-white text-sm text-center">{transaction.date}</div>
+                  <div className="text-white text-sm text-center">{transaction.amount}</div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>

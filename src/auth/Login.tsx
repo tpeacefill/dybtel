@@ -3,11 +3,13 @@ import { z } from 'zod'
 import worldMap from '../assets/world-map.svg'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
+import { useAuthStore } from '../store/authStore'
 
 export default function Login({ onSuccess }: { onSuccess?: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const { login } = useAuthStore()
 
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEmail(e.target.value)
@@ -38,7 +40,8 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     }
 
     setErrors({})
-    // TODO: integrate with backend auth
+    // Store email in global state and navigate to TopUp
+    login(email)
     onSuccess?.()
   }
 

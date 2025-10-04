@@ -1,28 +1,28 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './auth/Login'
-import Dashboard from './pages/Dashboard'
 import ActivityHistory from './pages/ActivityHistory'
+import TopUp from './pages/TopUp'
+import { useAuthStore } from './store/authStore'
 
 function App() {
-  const [authed, setAuthed] = useState(false)
+  const { isLoggedIn } = useAuthStore()
   
   return (
     <Router>
       <Routes>
         <Route 
           path="/login" 
-          element={authed ? <Navigate to="/dashboard" replace /> : <Login onSuccess={() => setAuthed(true)} />} 
+          element={isLoggedIn ? <Navigate to="/topup" replace /> : <Login onSuccess={() => {}} />} 
         />
         <Route 
-          path="/dashboard" 
-          element={authed ? <Dashboard /> : <Navigate to="/login" replace />} 
+          path="/topup" 
+          element={isLoggedIn ? <TopUp onBackToLogin={() => {}} /> : <Navigate to="/login" replace />} 
         />
         <Route 
           path="/activity-history" 
-          element={authed ? <ActivityHistory /> : <Navigate to="/login" replace />} 
+          element={isLoggedIn ? <ActivityHistory /> : <Navigate to="/login" replace />} 
         />
-        <Route path="/" element={<Navigate to={authed ? "/dashboard" : "/login"} replace />} />
+        <Route path="/" element={<Navigate to={isLoggedIn ? "/topup" : "/login"} replace />} />
       </Routes>
     </Router>
   )

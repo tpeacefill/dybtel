@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
+import { useNavigate } from 'react-router-dom'
 import worldMap from '../assets/world-map.svg'
 import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
+import { useAuthStore } from '../store/authStore'
+import { useTransactionStore } from '../store/transactionStore'
 
 export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void }) {
   const [email, setEmail] = useState('')
@@ -15,6 +18,16 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
     amount?: string; 
     wardSerialId?: string 
   }>({})
+  const { email: storedEmail, logout } = useAuthStore()
+  const { addTransaction } = useTransactionStore()
+  const navigate = useNavigate()
+
+  // Prefill email from store when component mounts
+  useEffect(() => {
+    if (storedEmail) {
+      setEmail(storedEmail)
+    }
+  }, [storedEmail])
 
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEmail(e.target.value)
@@ -22,7 +35,8 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
   }
 
   function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setPhone(e.target.value)
+    const value = e.target.value.replace(/\D/g, '').slice(0, 10) // Only numbers, max 10 digits
+    setPhone(value)
     if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }))
   }
 
@@ -32,7 +46,8 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
   }
 
   function handleWardSerialIdChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setWardSerialId(e.target.value)
+    const value = e.target.value.replace(/\D/g, '').slice(0, 3) // Only numbers, max 3 digits
+    setWardSerialId(value)
     if (errors.wardSerialId) setErrors((prev) => ({ ...prev, wardSerialId: undefined }))
   }
 
@@ -40,12 +55,15 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
     e.preventDefault()
     const schema = z.object({
       email: z.string().min(1, 'Email is required').email('Enter a valid email'),
-      phone: z.string().min(1, 'Phone number is required').min(10, 'Phone number must be at least 10 digits'),
+      phone: z.string().min(1, 'Phone number is required').length(10, 'Phone number must be exactly 10 digits'),
       amount: z.string().min(1, 'Amount is required').refine((val) => {
         const num = parseFloat(val)
         return !isNaN(num) && num > 0
       }, 'Amount must be a valid positive number'),
-      wardSerialId: z.string().min(1, 'Ward Serial ID is required'),
+      wardSerialId: z.string().min(1, 'Ward Serial ID is required').length(3, 'Ward Serial ID must be exactly 3 digits').refine((val) => {
+        const num = parseInt(val, 10)
+        return num >= 1 && num <= 20
+      }, 'Ward Serial ID must be between 001 and 020'),
     })
 
     const result = schema.safeParse({ email, phone, amount, wardSerialId })
@@ -67,8 +85,14 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
     }
 
     setErrors({})
-    // TODO: integrate with payment processing
-    console.log('Proceeding to payment with:', { email, phone, amount, wardSerialId })
+    // Save transaction data and navigate to ActivityHistory
+    addTransaction({
+      email,
+      phone,
+      amount,
+      wardSerialId
+    })
+    navigate('/activity-history')
   }
 
   return (
@@ -80,7 +104,10 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
         <div className="relative z-20 mx-auto w-full max-w-sm lg:rounded-2xl lg:bg-[#ededed] lg:p-8 lg:shadow-xl">
           {/* Back button */}
           <button 
-            onClick={onBackToLogin}
+            onClick={() => {
+              logout()
+              onBackToLogin?.()
+            }}
             className="mb-4 flex items-center text-primary hover:text-primary/80 transition-colors"
           >
             <svg 
@@ -93,7 +120,7 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
                 strokeWidth={2} 
-                d="M15 19l-7-7 7-7" 
+                d="M10 19l-7-7m0 0l7-7m-7 7h18" 
               />
             </svg>
             Back to Login
@@ -108,6 +135,7 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
               value={email}
               onChange={handleEmailChange}
               error={errors.email}
+              disabled={true}
             />
             <FormField
               id="phone"
@@ -116,6 +144,7 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
               value={phone}
               onChange={handlePhoneChange}
               error={errors.phone}
+              placeholder="0277324365"
             />
             <FormField
               id="amount"
@@ -125,14 +154,50 @@ export default function TopUp({ onBackToLogin }: { onBackToLogin?: () => void })
               onChange={handleAmountChange}
               error={errors.amount}
             />
-            <FormField
-              id="wardSerialId"
-              label="Ward Serial ID"
-              type="text"
-              value={wardSerialId}
-              onChange={handleWardSerialIdChange}
-              error={errors.wardSerialId}
-            />
+            <div>
+              <label htmlFor="wardSerialId" className="block text-xs font-medium text-gray-500">Ward Serial ID</label>
+              <div className={`mt-2 flex rounded-xl border ${errors.wardSerialId ? 'border-red-500' : 'border-gray-300'} bg-white overflow-hidden`}>
+                <input
+                  id="wardSerialId"
+                  type="text"
+                  value={wardSerialId}
+                  onChange={handleWardSerialIdChange}
+                  placeholder="001"
+                  className="flex-1 px-4 py-3 outline-none ring-primary focus:ring-1 focus:border-primary"
+                  aria-invalid={Boolean(errors.wardSerialId)}
+                  aria-describedby={errors.wardSerialId ? 'wardSerialId-error' : undefined}
+                />
+                <button
+                  type="button"
+                  className="px-4 py-3 bg-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center"
+                  onClick={() => {
+                    const currentValue = wardSerialId ? parseInt(wardSerialId, 10) : 0
+                    const newValue = currentValue + 1
+                    if (newValue <= 20) {
+                      setWardSerialId(newValue.toString().padStart(3, '0'))
+                      if (errors.wardSerialId) setErrors((prev) => ({ ...prev, wardSerialId: undefined }))
+                    }
+                  }}
+                >
+                  <svg 
+                    className="w-5 h-5 text-gray-600" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6" 
+                    />
+                  </svg>
+                </button>
+              </div>
+              {errors.wardSerialId ? (
+                <p id="wardSerialId-error" className="mt-1 text-xs text-red-600">{errors.wardSerialId}</p>
+              ) : null}
+            </div>
             <PrimaryButton type="submit" className="mt-2">Proceed to Payment</PrimaryButton>
           </form>
         </div>
