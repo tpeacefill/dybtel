@@ -32,6 +32,25 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     localStorage.setItem('savedPassword', password)
   }
 
+  // Validate credentials against saved data
+  const validateCredentials = useCallback((email: string, password: string) => {
+    const { email: savedEmail, password: savedPassword } = getSavedCredentials()
+    
+    if (!savedEmail) {
+      return { isValid: false, error: 'Email not found. Please sign up first.' }
+    }
+    
+    if (savedEmail !== email) {
+      return { isValid: false, error: 'Email not found. Please check your email or sign up.' }
+    }
+    
+    if (savedPassword !== password) {
+      return { isValid: false, error: 'Incorrect password. Please try again.' }
+    }
+    
+    return { isValid: true, error: null }
+  }, [])
+
   // Use custom hook for form fields
   const emailField = useFormField({
     errors,
@@ -68,6 +87,14 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
         return
       }
 
+      // Validate credentials against saved data
+      const credentialValidation = validateCredentials(emailField.value, passwordField.value)
+      
+      if (!credentialValidation.isValid) {
+        setErrors({ email: credentialValidation.error || undefined })
+        return
+      }
+
       setErrors({})
       
       // Check if user is logging in with saved credentials
@@ -91,7 +118,7 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
     } finally {
       setIsLoading(false)
     }
-  }, [emailField.value, passwordField.value, login, onSuccess, isLoading, handleValidationErrors])
+  }, [emailField.value, passwordField.value, login, onSuccess, isLoading, handleValidationErrors, validateCredentials])
 
 
   return (
