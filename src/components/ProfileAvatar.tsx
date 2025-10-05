@@ -10,7 +10,7 @@ export default function ProfileAvatar({
   userName 
 }: ProfileAvatarProps) {
   return (
-    <div className="relative z-10 mx-auto max-w-md px-6">
+    <div className="relative z-10 mx-auto max-w-md lg:max-w-lg xl:max-w-xl px-6">
       {/* Avatar + arc (simple accent) */}
       <div className="mt-4 flex items-center justify-center gap-4 relative h-64 overflow-hidden">
         {profiles.map((profile, index) => {
