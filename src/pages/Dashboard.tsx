@@ -54,7 +54,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="relative min-h-screen bg-white">
+    <div className="relative min-h-screen bg-white overflow-x-hidden">
 
       {/* Header row (icons) - Full width */}
       <div className="w-full bg-white px-6 pt-8">
@@ -76,12 +76,12 @@ export default function Dashboard() {
         {/* SVG curved top */}
         <svg
           className="absolute top-0 left-0 w-full"
-          viewBox="0 0 375 100"
+          viewBox="0 0 100 100"
           preserveAspectRatio="none"
           style={{ height: '100px' }}
         >
           <path
-            d="M 0,0 Q 187.5,100 375,0 L 375,0 L 0,0 Z"
+            d="M 0,0 Q 50,100 100,0 L 100,0 L 0,0 Z"
             fill="white"
           />
         </svg>

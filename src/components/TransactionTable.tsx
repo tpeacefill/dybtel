@@ -18,11 +18,11 @@ export default function TransactionTable({
   const headers = ['ID', 'Ward', 'Date', 'Amount']
 
   return (
-    <div className="relative bg-gradient-to-b from-green-500 to-green-600 rounded-3xl overflow-hidden">
+    <div className="relative bg-gradient-to-b from-green-500 to-green-600 rounded-3xl overflow-hidden w-full">
       {/* Table Headers */}
-      <div className="grid grid-cols-4 gap-4 px-4 py-4" style={{ backgroundColor: '#2c5b53' }}>
+      <div className="grid grid-cols-4 gap-2 px-2 py-4" style={{ backgroundColor: '#2c5b53' }}>
         {headers.map((header) => (
-          <div key={header} className="text-white font-semibold text-sm text-center">
+          <div key={header} className="text-white font-semibold text-xs sm:text-sm text-center truncate">
             {header}
           </div>
         ))}
@@ -34,7 +34,7 @@ export default function TransactionTable({
           <div
             key={transaction.id}
             onClick={() => onRowSelect(index)}
-            className={`grid grid-cols-4 gap-4 px-4 py-4 cursor-pointer transition-colors ${
+            className={`grid grid-cols-4 gap-2 px-2 py-4 cursor-pointer transition-colors ${
               index === 0
                 ? 'border-2 border-[#0d9aff]'
                 : selectedRow === index
@@ -47,10 +47,10 @@ export default function TransactionTable({
                            (index < transactions.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none')
             }}
           >
-            <div className="text-white text-sm text-center">{transaction.wardSerialId}</div>
-            <div className="text-white text-sm text-center">{transaction.wardName}</div>
-            <div className="text-white text-sm text-center">{transaction.date}</div>
-            <div className="text-white text-sm text-center">{transaction.amount}</div>
+            <div className="text-white text-xs sm:text-sm text-center truncate">{transaction.wardSerialId}</div>
+            <div className="text-white text-xs sm:text-sm text-center truncate">{transaction.wardName}</div>
+            <div className="text-white text-xs sm:text-sm text-center truncate">{transaction.date}</div>
+            <div className="text-white text-xs sm:text-sm text-center truncate">{transaction.amount}</div>
           </div>
         ))}
       </div>

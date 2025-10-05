@@ -12,7 +12,7 @@ export default function ActivityHistory() {
   const { selectedRow, selectRow } = useRowSelection()
 
   return (
-    <div className="relative min-h-screen bg-white">
+    <div className="relative min-h-screen bg-white overflow-x-hidden">
       {/* Navigation Bar */}
       <NavigationBar onBack={() => navigate('/dashboard')} />
 

@@ -12,16 +12,16 @@ export default function CurvedSection({
   className = ''
 }: CurvedSectionProps) {
   return (
-    <div className={`relative w-full pb-5 ${className}`}>
+    <div className={`relative w-full pb-5 overflow-x-hidden ${className}`}>
       {/* SVG curved section */}
       <svg
         className="w-full"
-        viewBox={`0 0 375 ${curveHeight}`}
+        viewBox={`0 0 100 ${curveHeight}`}
         preserveAspectRatio="none"
         style={{ height: `${curveHeight}px`, backgroundColor }}
       >
         <path
-          d={`M 0,${curveHeight} Q 187.5,0 375,${curveHeight} L 375,0 L 0,0 Z`}
+          d={`M 0,${curveHeight} Q 50,0 100,${curveHeight} L 100,0 L 0,0 Z`}
           fill="white"
         />
       </svg>
