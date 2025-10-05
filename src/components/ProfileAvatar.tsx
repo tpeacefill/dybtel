@@ -10,9 +10,9 @@ export default function ProfileAvatar({
   userName 
 }: ProfileAvatarProps) {
   return (
-    <div className="relative z-10 mx-auto max-w-md px-6 overflow-hidden">
+    <div className="relative z-10 mx-auto max-w-md px-6">
       {/* Avatar + arc (simple accent) */}
-      <div className="mt-4 flex items-center justify-center gap-4 relative h-64">
+      <div className="mt-4 flex items-center justify-center gap-4 relative h-64 overflow-hidden">
         {profiles.map((profile, index) => {
           const position = (index - activeProfile + 3) % 3
           const isCenter = position === 1
@@ -24,12 +24,12 @@ export default function ProfileAvatar({
               key={index}
               className={`absolute transition-all duration-700 ease-in-out ${
                 isCenter ? 'z-30 scale-100 opacity-100' : 'scale-75 opacity-60'
-              } ${isLeft ? 'z-10 -translate-x-32 sm:-translate-x-44' : ''} ${
-                isRight ? 'z-10 translate-x-32 sm:translate-x-44' : ''
+              } ${isLeft ? 'z-10 -translate-x-44' : ''} ${
+                isRight ? 'z-10 translate-x-44' : ''
               } ${isCenter ? 'translate-x-0' : ''}`}
             >
               <div className="relative">
-                <svg className="absolute -inset-4 sm:-inset-6 w-[176px] h-[176px] sm:w-[208px] sm:h-[208px]" viewBox="0 0 208 208">
+                <svg className="absolute -inset-6 w-[208px] h-[208px]" viewBox="0 0 208 208">
                   <circle
                     cx="104"
                     cy="104"
@@ -53,7 +53,7 @@ export default function ProfileAvatar({
                 <img
                   src={profile.image}
                   alt="Profile"
-                  className="h-32 w-32 sm:h-40 sm:w-40 rounded-full object-cover"
+                  className="h-40 w-40 rounded-full object-cover"
                 />
               </div>
             </div>
