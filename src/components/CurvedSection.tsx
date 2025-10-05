@@ -12,7 +12,7 @@ export default function CurvedSection({
   className = ''
 }: CurvedSectionProps) {
   return (
-    <div className={`relative w-full pb-5 overflow-x-hidden ${className}`}>
+    <div className={`relative w-full overflow-x-hidden ${className}`}>
       {/* SVG curved section */}
       <svg
         className="w-full"
