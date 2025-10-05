@@ -24,8 +24,8 @@ export default function ProfileAvatar({
               key={index}
               className={`absolute transition-all duration-700 ease-in-out ${
                 isCenter ? 'z-30 scale-100 opacity-100' : 'scale-75 opacity-60'
-              } ${isLeft ? 'z-10 -translate-x-44' : ''} ${
-                isRight ? 'z-10 translate-x-44' : ''
+              } ${isLeft ? 'z-10 -translate-x-32 sm:-translate-x-44' : ''} ${
+                isRight ? 'z-10 translate-x-32 sm:translate-x-44' : ''
               } ${isCenter ? 'translate-x-0' : ''}`}
             >
               <div className="relative">
