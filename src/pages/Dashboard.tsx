@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import FormField from '../components/FormField'
@@ -19,6 +19,17 @@ export default function Dashboard() {
   
   // Error state for validation
   const [error, setError] = useState('')
+
+  // Preload profile images immediately when Dashboard mounts
+  useEffect(() => {
+    PROFILE_CONFIGS.forEach((profile) => {
+      const link = document.createElement('link')
+      link.rel = 'preload'
+      link.as = 'image'
+      link.href = profile.image
+      document.head.appendChild(link)
+    })
+  }, [])
   
   // Use custom hook for form field
   const customAmountField = useFormField({

@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 interface ProfileAvatarProps {
   profiles: readonly { readonly color: string; readonly type: string; readonly image: string }[]
   activeProfile: number
@@ -9,6 +11,33 @@ export default function ProfileAvatar({
   activeProfile, 
   userName 
 }: ProfileAvatarProps) {
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set())
+
+  // Preload all profile images
+  useEffect(() => {
+    const preloadImages = async () => {
+      const imagePromises = profiles.map((profile) => {
+        return new Promise<string>((resolve, reject) => {
+          const img = new Image()
+          img.onload = () => {
+            setLoadedImages(prev => new Set([...prev, profile.image]))
+            resolve(profile.image)
+          }
+          img.onerror = reject
+          img.src = profile.image
+        })
+      })
+
+      try {
+        await Promise.all(imagePromises)
+      } catch (error) {
+        console.warn('Some images failed to preload:', error)
+      }
+    }
+
+    preloadImages()
+  }, [profiles])
+
   return (
     <div className="relative z-10 mx-auto max-w-md lg:max-w-lg xl:max-w-xl px-6">
       {/* Avatar + arc (simple accent) */}
@@ -50,11 +79,19 @@ export default function ProfileAvatar({
                     }
                   />
                 </svg>
-                <img
-                  src={profile.image}
-                  alt="Profile"
-                  className="h-40 w-40 rounded-full object-cover"
-                />
+                {loadedImages.has(profile.image) ? (
+                  <img
+                    src={profile.image}
+                    alt="Profile"
+                    className="h-40 w-40 rounded-full object-cover"
+                    loading="eager"
+                    decoding="sync"
+                  />
+                ) : (
+                  <div className="h-40 w-40 rounded-full bg-gray-200 animate-pulse flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-gray-300"></div>
+                  </div>
+                )}
               </div>
             </div>
           )
